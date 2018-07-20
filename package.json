@@ -4,8 +4,9 @@
   "description": "Blogisovellus",
   "main": "index.js",
   "scripts": {
-    "test": "test",
-    "watch": "nodemon index.js"
+    "test": "jest --verbose",
+    "watch": "nodemon index.js",
+    "lint": "eslint ."
   },
   "repository": {
     "type": "git",
@@ -26,6 +27,7 @@
     "npm": "^6.2.0"
   },
   "devDependencies": {
+    "jest": "^23.4.1",
     "nodemon": "^1.18.3"
   }
 }
