@@ -16,33 +16,58 @@ const favoriteBlog = (blogs) => {
     }, 0)]
 }
 
+const mostBlogsAuthor = (blogs) => {
+    const blogsOfAuthors = (blogs
+        .reduce((authorBlogs, blog) => {
+            authorBlogs[blog.author] = ((typeof authorBlogs[blog.author] === 'undefined') ? 0 : authorBlogs[blog.author]) + 1
+            return authorBlogs
+        }, []))
+
+
+    if (blogsOfAuthors === undefined || Object.keys(blogsOfAuthors).length == 0) {
+        return({ 
+            author: undefined,
+            blogs: undefined
+        })
+    }
+
+    const mostBlogsAuthor = Object.keys(blogsOfAuthors).reduce((a, b) => blogsOfAuthors[a] > blogsOfAuthors[b] ? a : b)
+    const mostBlogs = blogsOfAuthors[mostBlogsAuthor]
+    return({ 
+        author: mostBlogsAuthor,
+        blogs: mostBlogs
+    })
+}
+
 const mostLikedAuthor = (blogs) => {
     const likesOfAuthors = (blogs
         .reduce((authorLikes, blog) => {
             authorLikes[blog.author] = ((typeof authorLikes[blog.author] === 'undefined') ? 0 : authorLikes[blog.author]) + blog.likes
             return authorLikes   
         }, []))
+    
+
+    if (likesOfAuthors === undefined || Object.keys(likesOfAuthors).length == 0) {
+        return({ 
+            author: undefined,
+            likes: undefined
+        })
+    }
 
     const mostLikedAuthor = Object.keys(likesOfAuthors).reduce((a, b) => likesOfAuthors[a] > likesOfAuthors[b] ? a : b)
     const mostLikes = likesOfAuthors[mostLikedAuthor]
     return({ 
         author: mostLikedAuthor,
         likes: mostLikes
-    })
-    
-    //.sort((a, b) => a < b)
-//        .reduce((mostLiked, element) => {
-//            console.log(element)
-//            mostLiked = element
-//            console.log(mostLiked)
-//            return mostLiked
-//        }, {})
-    
+    })  
 }
+
+//const mostXAuthor = ('blogs', ) {}
   
 module.exports = {
     dummy,
     totalLikes,
     favoriteBlog,
+    mostBlogsAuthor,
     mostLikedAuthor
 }

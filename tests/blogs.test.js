@@ -109,12 +109,59 @@ describe('best blog', () => {
     })
 })
 
+describe('most blogs author', () => {
+    test('when list has multiple authors, the name and blog count equals the correct values', () => {
+        const result = listHelper.mostBlogsAuthor(listWithManyBlogs)
+        const expectedValue = {
+            author: 'Robert C. Martin',
+            blogs: 3
+        }
+        expect(result).toEqual(expectedValue)
+    })
+
+    test('when list has one authors, the name and blog count equals that one', () => {
+        const result = listHelper.mostBlogsAuthor(listWithOneBlog)
+        const expectedValue = {
+            author: 'Edsger W. Dijkstra',
+            blogs: 1
+        }
+        expect(result).toEqual(expectedValue)
+    })
+
+    test('when list has no authors, the name and blog count equals undefined', () => {
+        const result = listHelper.mostBlogsAuthor(emptyListOfBlogs)
+        const expectedValue = {
+            author: undefined,
+            blogs: undefined
+        }
+        expect(result).toEqual(expectedValue)
+    })
+})
+
 describe('most liked author', () => {
-    test('debugging', () => {
+    test('when list has multiple authors, the name and like count equals the correct values', () => {
         const result = listHelper.mostLikedAuthor(listWithManyBlogs)
         const expectedValue = {
             author: 'Edsger W. Dijkstra',
             likes: 17
+        }
+        expect(result).toEqual(expectedValue)
+    })
+
+    test('when list has one authors, the name and like count equals that one', () => {
+        const result = listHelper.mostLikedAuthor(listWithOneBlog)
+        const expectedValue = {
+            author: 'Edsger W. Dijkstra',
+            likes: 5
+        }
+        expect(result).toEqual(expectedValue)
+    })
+
+    test('when list has no authors, the name and like count equals undefined', () => {
+        const result = listHelper.mostLikedAuthor(emptyListOfBlogs)
+        const expectedValue = {
+            author: undefined,
+            likes: undefined
         }
         expect(result).toEqual(expectedValue)
     })
