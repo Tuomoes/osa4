@@ -98,14 +98,25 @@ describe('best blog', () => {
 
     test('when list has no blogs, result is undefined', () => {
         const result = listHelper.favoriteBlog(emptyListOfBlogs)
-        console.log(result)
+        //console.log(result)
         expect(result).toEqual(undefined)
     })
 
     test('when list has one blog, the result is that one', () => {
         const result = listHelper.favoriteBlog(listWithOneBlog)
-        console.log(result)
+        //console.log(result)
         expect(result).toEqual(listWithOneBlog[0])
+    })
+})
+
+describe('most liked author', () => {
+    test('debugging', () => {
+        const result = listHelper.mostLikedAuthor(listWithManyBlogs)
+        const expectedValue = {
+            author: 'Edsger W. Dijkstra',
+            likes: 17
+        }
+        expect(result).toEqual(expectedValue)
     })
 })
 
