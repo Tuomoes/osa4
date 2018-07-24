@@ -1,26 +1,47 @@
-// const http = require('http')
+const http = require('http')
 const express = require('express')
 const app = express()
 const bodyParser = require('body-parser')
 const cors = require('cors')
 const mongoose = require('mongoose')
 const blogsRouter = require('./controllers/blogs')
+const config = require('./utils/config')
 
-app.use('/api/blogs', blogsRouter)
+
 app.use(cors())
 app.use(bodyParser.json())
 
-if (process.env.NODE_ENV !== 'production') {
-    require('dotenv').config()
-}
+app.use('/api/blogs', blogsRouter)
 
 
-const mongoUrl = process.env.MONGODB_URI
-mongoose.connect(mongoUrl)
+//const mongoUrl = process.env.MONGODB_URI
+console.log('mongoUrl is', config.mongoUrl, 'port is', config.port)
+mongoose
+    .connect(config.mongoUrl)
+    .then( () => {
+        console.log('connected to database', config.mongoUrl)
+    })
+    .catch( err => {
+        console.log('error happened. Oh no :(')
+        console.log(err)
+    })
 
+//const PORT = 3003
+//const PORT = config.port
+//app.listen(PORT, () => {
+//    console.log(`Server running on port ${PORT}`)
+//})
 
+const server = http.createServer(app)
 
-const PORT = 3003
-app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`)
+server.listen(config.port, () => {
+    console.log(`Server running on port ${config.port}`)
 })
+
+server.on('close', () => {
+    mongoose.connection.close()
+})
+
+module.exports = {
+    app, server
+}

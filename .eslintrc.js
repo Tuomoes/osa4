@@ -23,5 +23,8 @@ module.exports = {
             "never"
         ],
         "no-console": 0
+    },
+    "parserOptions": {
+        "ecmaVersion": 2018
     }
 };
