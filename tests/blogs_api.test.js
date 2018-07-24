@@ -75,6 +75,24 @@ describe('when some blogs are initially saved', async () => {
         console.log('finished blog POST test')
     })
 
+    test('POST /api/blogs with missing likes will result in blog with zero likes', async () => {
+        const newBlog = {
+            title: 'Zero likes blog title',
+            author: 'Zer O. Likeson',
+            url: 'http://www.nolikes.com/blogpostZero'
+        }
+
+        const response = await api
+            .post('/api/blogs')
+            .send(newBlog)
+            .expect(201)
+            .expect('Content-Type', /application\/json/)
+
+        expect(response.body.likes).toBe(0)
+
+        console.log('likes is:', response.body.likes, '\n\n\n\n\n')
+    })
+
     afterAll(() => {
         server.close()
     })

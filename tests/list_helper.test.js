@@ -67,7 +67,7 @@ const listWithManyBlogs = [
 test('dummy is called', () => {
 
     const result = listHelper.dummy(emptyListOfBlogs)
-    expect(result).toBe(1)
+    expect(result).toBe(emptyListOfBlogs)
 })
 
 describe('total likes', () => {
