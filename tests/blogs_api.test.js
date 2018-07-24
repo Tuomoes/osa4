@@ -93,6 +93,32 @@ describe('when some blogs are initially saved', async () => {
         console.log('likes is:', response.body.likes, '\n\n\n\n\n')
     })
 
+    test('POST /api/blogs with missing title will return status code 400 (bad request)', async () => {
+        const newBlog = {
+            author: 'Forgo T. Title',
+            url: 'http://www.notitle.com/blogpostTitleless'
+        }
+
+        await api
+            .post('/api/blogs')
+            .send(newBlog)
+            .expect(400)
+            .expect('Content-Type', /application\/json/)
+    })
+
+    test('POST /api/blogs with missing url will return status code 400 (bad request)', async () => {
+        const newBlog = {
+            title: 'Blog post without url is useless',
+            author: 'Urlis Missing'
+        }
+
+        await api
+            .post('/api/blogs')
+            .send(newBlog)
+            .expect(400)
+            .expect('Content-Type', /application\/json/)
+    })
+
     afterAll(() => {
         server.close()
     })
