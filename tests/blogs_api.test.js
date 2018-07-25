@@ -2,21 +2,8 @@ const supertest = require('supertest')
 const { app, server } = require('../index')
 const api = supertest(app)
 const Blog = require('../models/blog')
+const helper = require('./test_helper')
 
-const initialBlogs = [
-    {
-        title: 'React patterns',
-        author: 'Michael Chan',
-        url: 'https://reactpatterns.com/',
-        likes: 7
-    },
-    {
-        title: 'Go To Statement Considered Harmful',
-        author: 'Edsger W. Dijkstra',
-        url: 'http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html',
-        likes: 5
-    }
-]
 
 describe('when some blogs are initially saved', async () => {
 
@@ -24,7 +11,7 @@ describe('when some blogs are initially saved', async () => {
         await Blog.remove({})
         console.log('cleared')
 
-        const blogObjects = initialBlogs.map(n => new Blog(n))
+        const blogObjects = helper.initialBlogs.map(n => new Blog(n))
         await Promise.all(blogObjects.map(n => n.save()))
         console.log('saved')
         /**
@@ -47,12 +34,13 @@ describe('when some blogs are initially saved', async () => {
         
         console.log('get test body content:\n', response.body)
         
-        expect(response.body.length).toBe(initialBlogs.length)
+        expect(response.body.length).toBe(helper.initialBlogs.length)
         console.log('blog get test finished')
     })
 
     test('POST /api/blogs succeessful with valid data', async () => {
         console.log('starting blog POST test')
+        const blogsAtStartLength = helper.blogsInDb.length
         const newBlog = {
             title: 'Canonical string reduction',
             author: 'Edsger W. Dijkstra',
@@ -67,10 +55,10 @@ describe('when some blogs are initially saved', async () => {
             .expect('Content-Type', /application\/json/)
 
         const responseGet = await api.get('/api/blogs')
-        const notesAtStartLength = initialBlogs.length
+        //const notesAtStartLength = initialBlogs.length
         const titles = responseGet.body.map(r => r.title)
 
-        expect(responseGet.body.length).toBe(notesAtStartLength + 1)
+        expect(responseGet.body.length).toBe(blogsAtStartLength + 1)
         expect(titles).toContain('Canonical string reduction')
         console.log('finished blog POST test')
     })
