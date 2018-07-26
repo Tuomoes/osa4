@@ -53,9 +53,6 @@ blogsRouter.put('/:id', async (request, response) => {
         console.log(error)
         response.status(400).send({error: 'malformatted id'})
     }
-
-
-
 })
 
 module.exports = blogsRouter

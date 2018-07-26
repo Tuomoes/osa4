@@ -3,7 +3,7 @@ content-type: application/json
 
 {
     "title": "super blog pos2t",
-    "author": "Kolli Väiskinen",
-    "url": "http://yle.fi",
-    "likes": 5
+    "author": "Kolli2 Väiskinen",
+    "url": "http://yle.fi2",
+    "likes": 6
 }

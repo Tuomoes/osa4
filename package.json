@@ -20,6 +20,7 @@
   },
   "homepage": "https://github.com/Tuomoes/osa4#readme",
   "dependencies": {
+    "bcrypt": "^3.0.0",
     "cors": "^2.8.4",
     "dotenv": "^6.0.0",
     "eslint": "^5.1.0",
