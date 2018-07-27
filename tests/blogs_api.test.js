@@ -2,6 +2,7 @@ const supertest = require('supertest')
 const { app, server } = require('../index')
 const api = supertest(app)
 const Blog = require('../models/blog')
+const User = require('../models/user')
 const helper = require('./test_helper')
 
 
@@ -9,6 +10,7 @@ describe('when some blogs are initially saved', async () => {
 
     beforeAll(async () => {
         await Blog.remove({})
+        await User.remove({})
         console.log('cleared')
 
         const blogObjects = helper.initialBlogs.map(n => new Blog(n))
@@ -40,7 +42,8 @@ describe('when some blogs are initially saved', async () => {
 
     test('POST /api/blogs succeessful with valid data', async () => {
         console.log('starting blog POST test')
-        const blogsAtStartLength = helper.blogsInDb.length
+        const initBlogs = await helper.blogsInDb()
+        const blogsAtStartLength = initBlogs.length
         const newBlog = {
             title: 'Canonical string reduction',
             author: 'Edsger W. Dijkstra',
@@ -105,6 +108,56 @@ describe('when some blogs are initially saved', async () => {
             .send(newBlog)
             .expect(400)
             .expect('Content-Type', /application\/json/)
+    })
+
+    test('POST /api/users with password shorter than two characters will return status code 400 (bad request)', async () => {
+        const newUser = {
+            username: 'Test User273461234572',
+            name: 'John W. Doe',
+            password: '2b',
+            adult: true
+        }
+
+        const result = await api
+            .post('/api/users')
+            .send(newUser)
+            .expect(400)
+            .expect('Content-Type', /application\/json/)
+
+
+        expect(result.body).toEqual({ error: 'Password needs to be atleast 3 characters long.' })
+
+    })
+
+    test('POST /api/users two users with the same username will return status code 400 (bad request) on second user post', async () => {
+        const newUser1 = {
+            username: 'Mike',
+            name: 'Mike Johnson',
+            password: 'qarftuy45w3tag',
+            adult: true
+        }
+
+        const newUser2 = {
+            username: 'Mike',
+            name: 'Mike Adams',
+            password: 'lkjsfgdgtae654',
+            adult: true
+        }
+
+        await api
+            .post('/api/users')
+            .send(newUser1)
+            .expect(200)
+            .expect('Content-Type', /application\/json/)
+
+        
+        const result = await api
+            .post('/api/users')
+            .send(newUser2)
+            .expect(400)
+            .expect('Content-Type', /application\/json/)
+        
+        expect(result.body).toEqual({ error: 'Username already exists. Please, select different username.' })
     })
 
     afterAll(() => {

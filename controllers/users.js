@@ -24,7 +24,18 @@ usersRouter.get('/', async (request, response) => {
 usersRouter.post('/', async (request, response) => {
     try {
         const body = request.body
-        const saltRounds = 10
+        const username = body.username
+
+        if (body.password.length < 3) {
+            return response.status(400).json({error: 'Password needs to be atleast 3 characters long.'})
+        }
+        const userWithThisUsername = await User.findOne({ username:username })
+        console.log('found user:', userWithThisUsername)
+        if (userWithThisUsername !== null) {
+            return response.status(400).json({error: 'Username already exists. Please, select different username.' })
+        }
+
+        const saltRounds = 10        
         const passwordHash = await bcrypt.hash(body.password, saltRounds)
 
         const user = new User({
