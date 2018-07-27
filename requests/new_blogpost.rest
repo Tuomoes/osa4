@@ -2,8 +2,9 @@ POST http://localhost:3001/api/blogs
 content-type: application/json
 
 {
-    "title": "super blog pos2t",
-    "author": "Kolli2 Väiskinen",
-    "url": "http://yle.fi2",
-    "likes": 6
+    "title": "timen bloki2",
+    "user": "5b5b0bd57ade5021e84ab975",
+    "author": "time",
+    "url": "http://yle.fi",
+    "likes": 18542345
 }

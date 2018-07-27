@@ -1,16 +1,18 @@
 const blogsRouter = require('express').Router()
 const Blog = require('../models/blog')
+const User = require('../models/user')
 
 
 blogsRouter.get('/', (request, response) => {
     Blog
         .find({})
+        .populate('user', {username: 1, name: 1})
         .then(blogs => {
-            response.json(blogs)
+            response.json(blogs.map(blog => Blog.format(blog)))
         })
 })
 
-blogsRouter.post('/', (request, response) => {
+blogsRouter.post('/', async (request, response) => {
     const blog = new Blog(request.body)
     console.log('request body is:', request.body)
     
@@ -23,7 +25,15 @@ blogsRouter.post('/', (request, response) => {
         blog.likes = 0
     }
 
-    
+    const user = await User.findById(blog.user)
+    console.log('adding blog reference to user entity:', user)
+    console.log('blog id to be added:', blog._id )
+    user.blogs = user.blogs.concat(blog._id)
+    await user.save()
+
+    const userWithBlog = await User.findById(blog.user)
+    console.log('cross checking user entity blogs:', userWithBlog)
+
     blog
         .save()
         .then(result => {
