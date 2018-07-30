@@ -1,10 +1,10 @@
 POST http://localhost:3001/api/blogs
 content-type: application/json
+Authorization: eyJhbGciOiJIUzI1NiIsIkpXVCJ9.eyJ1c2VybmFtZSI6IlRpbXBwYTg4IiwiaWQiOiI1YjViMGQyOTNhNGMwOTFlNTg1MTQ1MTkiLCJpYXQiOjE1MzI5Mzk4OTZ9.4xYY4AxclwMO0CgfMtSNiCu-c3wN2YDo3rAAAE1uqzQ
 
 {
-    "title": "timen bloki2",
-    "user": "5b5b0bd57ade5021e84ab975",
-    "author": "time",
-    "url": "http://yle.fi",
-    "likes": 18542345
+    "title": "timen bloki7",
+    "author": "time88",
+    "url": "http://yle.fi/bloki",
+    "likes": 111
 }

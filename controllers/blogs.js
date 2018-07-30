@@ -1,6 +1,8 @@
 const blogsRouter = require('express').Router()
+const jwt = require('jsonwebtoken')
 const Blog = require('../models/blog')
 const User = require('../models/user')
+
 
 
 blogsRouter.get('/', (request, response) => {
@@ -12,33 +14,63 @@ blogsRouter.get('/', (request, response) => {
         })
 })
 
+const getTokenFrom = (request) => {
+    const authorization = request.get('authorization')
+    console.log('authorization variable is:', authorization)
+    if (authorization && authorization.toLowerCase().startsWith('bearer ')) {
+        return authorization.substring(7)
+    }
+    return null
+}
+
 blogsRouter.post('/', async (request, response) => {
-    const blog = new Blog(request.body)
+    
     console.log('request body is:', request.body)
     
-    if (request.body.title === undefined || request.body.url === undefined)
-    {
-        return response.status(400).json({error: 'title or url is missing'})
-    }
+    try {
+        const token = getTokenFrom(request)
+        console.log('token found')
+        const decodedToken = jwt.verify(token, process.env.SECRET)
+        console.log('token decoded')
 
-    if (request.body.likes === undefined) {
-        blog.likes = 0
-    }
+        if (!token || !decodedToken.id) {
+            return response.status(401).json({ error: 'token missing or invalid' })
+        }
 
-    const user = await User.findById(blog.user)
-    console.log('adding blog reference to user entity:', user)
-    console.log('blog id to be added:', blog._id )
-    user.blogs = user.blogs.concat(blog._id)
-    await user.save()
+        if (request.body.title === undefined || request.body.url === undefined)
+        {
+            return response.status(400).json({error: 'title or url is missing'})
+        }
+        
 
-    const userWithBlog = await User.findById(blog.user)
-    console.log('cross checking user entity blogs:', userWithBlog)
 
-    blog
-        .save()
-        .then(result => {
-            response.status(201).json(result)
+
+        const user = await User.findById(decodedToken.id)
+        const blog = new Blog({
+            likes: request.body.likes === undefined ? 0 : request.body.likes,
+            author: request.body.author,
+            title: request.body.title,
+            url: request.body.url
         })
+
+
+        user.blogs = user.blogs.concat(blog._id)
+        await user.save()
+    
+        blog
+            .save()
+            .then(result => {
+                response.status(201).json(result)
+            })
+
+    } catch(exception) {
+        if (exception.name === 'JsonWebTokenError') {
+            response.status(401).json({error: exception.message})
+        } else {
+            console.log(exception)
+            response.status(500).json({ error: 'something went wrong :(' })
+        }
+    }
 })
 
 blogsRouter.delete('/:id', async (request, response) => {
