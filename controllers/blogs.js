@@ -25,7 +25,7 @@ blogsRouter.post('/', async (request, response) => {
         const token = request.token
         console.log('token found. token is:', token)
         const decodedToken = jwt.verify(token, process.env.SECRET)
-        console.log('token decoded')
+        console.log('token decoded is:', decodedToken)
 
         if (!token || !decodedToken.id) {
             return response.status(401).json({ error: 'token missing or invalid' })
@@ -42,6 +42,7 @@ blogsRouter.post('/', async (request, response) => {
         const user = await User.findById(decodedToken.id)
         const blog = new Blog({
             likes: request.body.likes === undefined ? 0 : request.body.likes,
+            user: user.id,
             author: request.body.author,
             title: request.body.title,
             url: request.body.url
@@ -69,8 +70,25 @@ blogsRouter.post('/', async (request, response) => {
 
 blogsRouter.delete('/:id', async (request, response) => {
     try {
-        await Blog.findByIdAndRemove(request.params.id)
-        response.status(204).end()
+        const token = request.token
+        const decodedToken = jwt.verify(token, process.env.SECRET)
+        if (!token || !decodedToken.id) {
+            return response.status(401).json({ error: 'token missing or invalid' })
+        }
+        const blog = await Blog.findById(request.params.id)
+        const blogUserIdInDb = blog.user.toString()
+        const blogDeleteRequesterId = decodedToken.id.toString()
+        console.log('Blog user id in database is:', blogUserIdInDb)
+        console.log('Requester user id is:', blogDeleteRequesterId)
+        if (blogUserIdInDb === blogDeleteRequesterId)
+        {
+            await Blog.findByIdAndRemove(request.params.id)
+            response.status(204).end()
+        }
+        else 
+        {
+            return response.status(401).json({ error: 'unauthorized user' })
+        }
     } catch (exception) {
         console.log(exception)
         response.status(400).send({ error: 'malformatted id' })
