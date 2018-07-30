@@ -8,10 +8,14 @@ const blogsRouter = require('./controllers/blogs')
 const usersRouter = require('./controllers/users')
 const loginRouter = require('./controllers/login')
 const config = require('./utils/config')
+const getTokenFrom = require('./middleware/getTokenFrom')
+
+
 
 
 app.use(cors())
 app.use(bodyParser.json())
+app.use(getTokenFrom)
 
 app.use('/api/blogs', blogsRouter)
 app.use('/api/users', usersRouter)

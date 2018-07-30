@@ -1,10 +1,10 @@
 POST http://localhost:3001/api/blogs
 content-type: application/json
-Authorization: eyJhbGciOiJIUzI1NiIsIkpXVCJ9.eyJ1c2VybmFtZSI6IlRpbXBwYTg4IiwiaWQiOiI1YjViMGQyOTNhNGMwOTFlNTg1MTQ1MTkiLCJpYXQiOjE1MzI5Mzk4OTZ9.4xYY4AxclwMO0CgfMtSNiCu-c3wN2YDo3rAAAE1uqzQ
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IlRpbXBwYTg4IiwiaWQiOiI1YjViMGQyOTNhNGMwOTFlNTg1MTQ1MTkiLCJpYXQiOjE1MzI5NDE4MzZ9.fGdgBu3tFrUGXMvDfHFoL7r0QtX2iuWJfG1-wOidhPY
 
 {
-    "title": "timen bloki7",
-    "author": "time88",
+    "title": "timen bloki with middleware",
+    "author": "time8811",
     "url": "http://yle.fi/bloki",
-    "likes": 111
+    "likes": 1112
 }
