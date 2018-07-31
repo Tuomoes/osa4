@@ -6,7 +6,9 @@ const User = require('../models/user')
 const helper = require('./test_helper')
 
 
+
 describe('when some blogs are initially saved', async () => {
+    let tokenBearer = ''
 
     beforeAll(async () => {
         await Blog.remove({})
@@ -16,18 +18,36 @@ describe('when some blogs are initially saved', async () => {
         const blogObjects = helper.initialBlogs.map(n => new Blog(n))
         await Promise.all(blogObjects.map(n => n.save()))
         console.log('saved')
-        /**
-        let blogObject = new Blog(initialBlogs[0])
-        await blogObject.save
-    
-        blogObject = new Blog(initialBlogs[1])
-        await blogObject.save
-        console.log('saved')
-         */
+
+        const testUser = {
+            username: 'Timmy69',
+            name: 'Timothy Tester',
+            password: 'test123',
+            adult: true
+        }
+
+        //create user
+        await api
+            .post('/api/users')
+            .send(testUser)
+
+
+        //login user
+        const response2 = await api
+            .post('/api/login')
+            .send({
+                username: 'Timmy69',
+                password: 'test123'
+            })
+        
+        tokenBearer =  'bearer ' + response2.body.token
+
     })
-    
+
     test('blogs are returned as json', async () => {
         
+        console.log('\n*\n*\n*\n*\n*', 'token is:', tokenBearer, '\n*\n*\n*\n*\n*')
+
         console.log('starting blog get test')
         const response = await api
             .get('/api/blogs')
@@ -53,6 +73,7 @@ describe('when some blogs are initially saved', async () => {
 
         await api
             .post('/api/blogs')
+            .set('authorization', tokenBearer)
             .send(newBlog)
             .expect(201)
             .expect('Content-Type', /application\/json/)
@@ -75,6 +96,7 @@ describe('when some blogs are initially saved', async () => {
 
         const response = await api
             .post('/api/blogs')
+            .set('authorization', tokenBearer)
             .send(newBlog)
             .expect(201)
             .expect('Content-Type', /application\/json/)
@@ -92,6 +114,7 @@ describe('when some blogs are initially saved', async () => {
 
         await api
             .post('/api/blogs')
+            .set('authorization', tokenBearer)
             .send(newBlog)
             .expect(400)
             .expect('Content-Type', /application\/json/)
@@ -105,6 +128,7 @@ describe('when some blogs are initially saved', async () => {
 
         await api
             .post('/api/blogs')
+            .set('authorization', tokenBearer)
             .send(newBlog)
             .expect(400)
             .expect('Content-Type', /application\/json/)
