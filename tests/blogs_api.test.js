@@ -31,7 +31,6 @@ describe('when some blogs are initially saved', async () => {
             .post('/api/users')
             .send(testUser)
 
-
         //login user
         const response2 = await api
             .post('/api/login')
