@@ -14,7 +14,14 @@ blogsRouter.get('/', (request, response) => {
         })
 })
 
-
+blogsRouter.get('/:id', (request, response) => {
+    Blog
+        .find({_id: request.params.id})
+        .populate('user', {username: 1, name: 1})
+        .then(blogs => {
+            response.json(blogs.map(blog => Blog.format(blog)))
+        })
+})
 
 blogsRouter.post('/', async (request, response) => {
     
