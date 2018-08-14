@@ -77,6 +77,55 @@ blogsRouter.post('/', async (request, response) => {
 
 blogsRouter.delete('/:id', async (request, response) => {
     try {
+        
+        // Check if blog with requested id exists
+        const blog = await Blog.findById(request.params.id)
+        console.log(blog)
+        if (blog === undefined || blog.length === 0) return response.status(400).send({ error: 'malformatted id' })
+        
+        // Check if blog has user in db
+        const blogUser = blog.user
+        console.log('blog user is:', blogUser)
+        if (blogUser === undefined) {
+            console.log('blog has no user so it can be deleted by anybody')
+            await Blog.findByIdAndRemove(request.params.id)
+            response.status(204).end()
+        } 
+        else
+        {
+            const blogUserIdInDb = blogUser.toString()
+            const token = request.token
+            const decodedToken = jwt.verify(token, process.env.SECRET)
+            const blogDeleteRequesterId = decodedToken.id.toString()
+            if (!token || !decodedToken.id) {
+                return response.status(401).json({ error: 'token missing or invalid' })
+            }
+            console.log('Blog user id in database is:', blogUserIdInDb)
+            console.log('Requester user id is:', blogDeleteRequesterId)
+            if (blogUserIdInDb === blogDeleteRequesterId)
+            {
+                await Blog.findByIdAndRemove(request.params.id)
+                response.status(204).end()
+            }
+            else 
+            {
+                return response.status(401).json({ error: 'unauthorized user' })
+            }
+        }  
+    } catch (exception) {
+        console.log(exception)
+        response.status(400).send({ error: 'malformatted id' })
+    }
+})
+/** 
+blogsRouter.delete('/:id', async (request, response) => {
+    try {
+        
+        //Check if blog with requested id exists
+
+        //Check if blog has user in db
+
+        
         const token = request.token
         const decodedToken = jwt.verify(token, process.env.SECRET)
         if (!token || !decodedToken.id) {
@@ -101,6 +150,8 @@ blogsRouter.delete('/:id', async (request, response) => {
         response.status(400).send({ error: 'malformatted id' })
     }
 })
+*/
+
 blogsRouter.put('/:id', async (request, response) => {
     const body = request.body
 
